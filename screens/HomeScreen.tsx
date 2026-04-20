@@ -13,6 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import supabase from '../lib/supabase';
+import { getCumplimiento } from '../lib/horometros';
+import CumplimientoCalendario from '../components/CumplimientoCalendario';
 
 type AppStackParams = {
   Home: undefined;
@@ -33,6 +35,7 @@ export default function HomeScreen() {
   const [reports, setReports] = useState<RecentReport[]>([]);
   const [loadingReports, setLoadingReports] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [reportedDates, setReportedDates] = useState<Set<string>>(new Set());
 
   const today = new Date().toLocaleDateString('es-CL', {
     weekday: 'long',
@@ -63,6 +66,10 @@ export default function HomeScreen() {
       .limit(5);
 
     if (recentReports) setReports(recentReports as RecentReport[]);
+
+    const dates = await getCumplimiento();
+    setReportedDates(dates);
+
     setLoadingReports(false);
   }, []);
 
@@ -165,6 +172,11 @@ export default function HomeScreen() {
           </View>
         ))
       )}
+
+      <Text style={[styles.sectionTitle, { marginTop: 20 }]}>
+        Mi cumplimiento — últimos 30 días
+      </Text>
+      <CumplimientoCalendario reportedDates={reportedDates} />
     </ScrollView>
     </SafeAreaView>
   );
