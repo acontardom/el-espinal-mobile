@@ -9,6 +9,8 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import HorometroScreen from './screens/HorometroScreen';
 import CombustibleScreen from './screens/CombustibleScreen';
+import CargaEstacionScreen from './screens/CargaEstacionScreen';
+import CombustibleMenuScreen from './screens/CombustibleMenuScreen';
 
 const AuthStack = createNativeStackNavigator();
 const AppStack = createNativeStackNavigator();
@@ -40,12 +42,46 @@ function AppNavigator() {
       <AppStack.Screen
         name="Horometro"
         component={HorometroScreen}
-        options={{ title: 'Horómetro' }}
+        options={{
+          headerTitle: '',
+          headerStyle: { backgroundColor: '#f5f5f5' },
+          headerTintColor: '#1a1a1a',
+          headerShadowVisible: false,
+          headerBackTitle: 'Volver',
+        }}
+      />
+      <AppStack.Screen
+        name="CombustibleMenu"
+        component={CombustibleMenuScreen}
+        options={{
+          headerTitle: '',
+          headerStyle: { backgroundColor: '#f5f5f5' },
+          headerTintColor: '#1a1a1a',
+          headerShadowVisible: false,
+          headerBackTitle: 'Volver',
+        }}
       />
       <AppStack.Screen
         name="Combustible"
         component={CombustibleScreen}
-        options={{ title: 'Combustible' }}
+        options={{
+          headerTitle: '',
+          headerStyle: { backgroundColor: '#f5f5f5' },
+          headerTintColor: '#1a1a1a',
+          headerShadowVisible: false,
+          headerBackTitle: 'Volver',
+        }}
+      />
+      <AppStack.Screen
+        name="CargaEstacion"
+        component={CargaEstacionScreen}
+        options={{
+          headerTitle: '',
+          headerStyle: { backgroundColor: '#f5f5f5' },
+          headerTintColor: '#1a1a1a',
+          headerShadowVisible: false,
+          headerBackTitle: 'Volver',
+        }}
       />
     </AppStack.Navigator>
   );

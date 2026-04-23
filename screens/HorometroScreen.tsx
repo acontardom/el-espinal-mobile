@@ -88,13 +88,14 @@ export default function HorometroScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.flex}>
+    <View style={styles.flex}>
     <KeyboardAvoidingView
       style={styles.flex}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.screenTitle}>Registrar horómetro</Text>
+        <Text style={styles.pageTitle}>Registrar horómetro</Text>
+        <Text style={styles.pageDesc}>Selecciona la máquina y registra las horas actuales.</Text>
 
         <SuccessMessage message={success} />
         <ErrorMessage message={error} />
@@ -147,26 +148,18 @@ export default function HorometroScreen() {
             <Text style={styles.saveBtnText}>Guardar</Text>
           )}
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.cancelBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.cancelBtnText}>Cancelar</Text>
-        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: '#F5F5F5' },
   container: { flex: 1 },
-  content: { padding: 20, paddingBottom: 48 },
-  screenTitle: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: '#111',
-    marginBottom: 20,
-  },
+  content: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 48 },
+  pageTitle: { fontSize: 26, fontWeight: '700', color: '#1a1a1a', marginTop: 0, marginBottom: 6 },
+  pageDesc: { fontSize: 14, color: '#666', marginBottom: 20, lineHeight: 20 },
   label: { fontSize: 15, fontWeight: '600', color: '#333', marginBottom: 6, marginTop: 8 },
   input: {
     borderWidth: 1.5,
@@ -181,12 +174,12 @@ const styles = StyleSheet.create({
   },
   textArea: { height: 90, textAlignVertical: 'top' },
   saveBtn: {
-    backgroundColor: '#1D9E75',
+    backgroundColor: '#1A56DB',
     borderRadius: 14,
     paddingVertical: 17,
     alignItems: 'center',
     marginTop: 28,
-    shadowColor: '#1D9E75',
+    shadowColor: '#1A56DB',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
@@ -194,14 +187,4 @@ const styles = StyleSheet.create({
   },
   btnDisabled: { opacity: 0.6 },
   saveBtnText: { fontSize: 18, fontWeight: '700', color: '#FFF' },
-  cancelBtn: {
-    borderRadius: 14,
-    paddingVertical: 15,
-    alignItems: 'center',
-    marginTop: 12,
-    borderWidth: 1.5,
-    borderColor: '#DDD',
-    backgroundColor: '#FFF',
-  },
-  cancelBtnText: { fontSize: 16, fontWeight: '600', color: '#666' },
 });
