@@ -13,18 +13,44 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import TankSelector from '../components/TankSelector';
 import MachineSelector from '../components/MachineSelector';
 import SuccessMessage from '../components/SuccessMessage';
 import ErrorMessage from '../components/ErrorMessage';
-import { uploadFactura, createCargaEstacion } from '../lib/combustible';
+import { createCargaEstacion } from '../lib/combustible';
 import supabase from '../lib/supabase';
 
 function todayISO() {
   return new Date().toISOString().split('T')[0];
+}
+
+async function uploadImage(uri: string): Promise<string | null> {
+  try {
+    console.log('[upload] uri recibida:', uri);
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    console.log('[upload] blob size:', blob.size, 'type:', blob.type);
+    const ext = uri.split('.').pop()?.toLowerCase() || 'jpg';
+    const fileName = `facturas/${Date.now()}.${ext}`;
+    const contentType = blob.type || 'image/jpeg';
+    const { error } = await supabase.storage
+      .from('facturas')
+      .upload(fileName, blob, { contentType, upsert: true });
+    if (error) {
+      console.error('[upload] error Supabase:', error);
+      return null;
+    }
+    const { data: urlData } = supabase.storage
+      .from('facturas')
+      .getPublicUrl(fileName);
+    console.log('[upload] URL final:', urlData.publicUrl);
+    return urlData.publicUrl;
+  } catch (err) {
+    console.error('[upload] excepción:', err);
+    return null;
+  }
 }
 
 export default function CargaEstacionScreen() {
@@ -71,7 +97,7 @@ export default function CargaEstacionScreen() {
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'images',
       quality: 0.7,
     });
     if (!result.canceled && result.assets[0]) setInvoiceUri(result.assets[0].uri);
@@ -84,7 +110,7 @@ export default function CargaEstacionScreen() {
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'images',
       quality: 0.7,
     });
     if (!result.canceled && result.assets[0]) setInvoiceUri(result.assets[0].uri);
@@ -128,7 +154,9 @@ export default function CargaEstacionScreen() {
 
     let invoiceUrl: string | null = null;
     if (invoiceUri) {
-      invoiceUrl = await uploadFactura(invoiceUri, user.id);
+      console.log('[CargaEstacion] imagen seleccionada uri:', invoiceUri);
+      invoiceUrl = await uploadImage(invoiceUri);
+      console.log('[CargaEstacion] invoiceUrl tras upload:', invoiceUrl);
     }
 
     const { error: saveError } = await createCargaEstacion({

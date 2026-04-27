@@ -13,23 +13,34 @@ interface CargaEstacionData {
   userId: string;
 }
 
-export async function uploadFactura(uri: string, userId: string): Promise<string | null> {
+export async function uploadFactura(uri: string, _userId: string): Promise<string | null> {
   try {
-    const ext = uri.split('.').pop()?.toLowerCase() ?? 'jpg';
-    const fileName = `${userId}/${Date.now()}.${ext}`;
+    console.log('[upload] uri recibida:', uri);
     const response = await fetch(uri);
     const blob = await response.blob();
-    const { error } = await supabase.storage
+
+    const fileName = `facturas/${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
+
+    const { data, error } = await supabase.storage
       .from('facturas')
-      .upload(fileName, blob, { contentType: 'image/jpeg' });
+      .upload(fileName, blob, {
+        contentType: 'image/jpeg',
+        upsert: true,
+      });
+
     if (error) {
       console.error('[uploadFactura] error:', error);
       return null;
     }
-    const { data } = supabase.storage.from('facturas').getPublicUrl(fileName);
-    return data.publicUrl;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('facturas')
+      .getPublicUrl(fileName);
+
+    console.log('[uploadFactura] URL generada:', publicUrl);
+    return publicUrl;
   } catch (e) {
-    console.error('[uploadFactura] exception:', e);
+    console.error('[uploadFactura] excepción:', e);
     return null;
   }
 }
